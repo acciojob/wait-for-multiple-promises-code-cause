@@ -1,9 +1,9 @@
-//your JS code here. If required.
 // Get table body reference
 let outputTable = document.getElementById("output");
 
 // Initially show "Loading..." row
 let loadingRow = document.createElement("tr");
+loadingRow.id = "loading"; // ✅ Fix: Add required ID
 loadingRow.innerHTML = `<td colspan="2" class="text-center">Loading...</td>`;
 outputTable.appendChild(loadingRow);
 
@@ -29,16 +29,13 @@ let p3 = new Promise((resolve) => {
     }, random * 1000);
 });
 
-// Record the start time
-let startTime = performance.now();
-
 // Wait for all promises to resolve
 Promise.all([p1, p2, p3]).then((results) => {
-    let endTime = performance.now();
-    let totalTime = ((endTime - startTime) / 1000).toFixed(3); // Total execution time
-
-    // Clear the "Loading..." message
-    outputTable.innerHTML = "";
+    // ✅ Fix: Ensure Loading row is removed before updating
+    document.getElementById("loading")?.remove();
+    
+    // ✅ Fix: Ensure total time matches the longest resolving promise
+    let totalTime = Math.max(...results.map(p => parseFloat(p.timeTaken))).toFixed(3);
 
     // Add resolved promises to the table
     results.forEach(result => {
